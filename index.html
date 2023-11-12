@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Quiz</title>
+
+    <style>
+        /* Google Font Import Link */
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
+        *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        text-decoration: none;
+        font-family: 'Ubuntu', sans-serif;
+            }
+        nav{
+
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+            }
+
+        nav .nav-content{
+        height: 100%;
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+            }
+
+        nav .logo a{
+        font-weight: 500;
+        font-size: 35px;
+        color: #f3f3f3;
+            }
+
+        
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f5f6f7;
+        }
+        
+        .header {
+            text-align: center;
+            text-transform: uppercase;
+            padding: 2px;
+            background-color: #0a0a23;
+            color: #fff;
+            border-bottom: 2px solid #fdb347;
+            }
+
+        .footer-bottom{
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            padding: 12px;
+            background-color: #0a0a23;
+            color: #fff;
+            border-bottom: 1px solid #fdb347;
+            }
+
+        #vmosh {
+                color: #f4f4f4b4;
+                
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        .instructions {
+            max-width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f2f2f2;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        iframe {
+            display: none;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            align-items: center;
+        }
+
+        #timer {
+            font-size: 18px;
+        }
+
+        #timer-bar {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 20px;
+            display: none;
+        }
+
+        #time-up-bar {
+            background-color: #ff0000;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 20px;
+            display: none;
+        }
+    </style>
+  </head>
+
+  <body>
+    
+    <header class="header">
+        <nav>
+            <div class="nav-content">
+              <div class="logo">
+                <a>Quiz</a>
+              </div>
+            </div>
+        </nav>
+    </header>
+
+    <br>
+    <div class="instructions"> 
+    <h1 id="h12">Quiz Page</h1>
+        <br>
+        <p>Quiz will start at 17:00 pm Sri Lankan time and last for 60 minutes.</p>
+        <br>
+        <div id="timer">Quiz starts in: 0:00:00</div>
+        <button id="startQuizButton" style="display: none;" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="timer-bar">
+        Timer: <span id="countdown">60:00</span>
+    </div>
+    <iframe id="quizFrame" src="https://forms.gle/o7xJbaoPLdywqrBv8" width="100%" height="1000" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+
+    <script>
+        var hd = document.getElementById("h12")
+        const instructions = document.querySelector('.instructions');
+        const quizFrame = document.getElementById('quizFrame');
+        const startQuizButton = document.getElementById('startQuizButton');
+        const timer = document.getElementById('timer');
+        const timerBar = document.getElementById('timer-bar');
+        const timeUpBar = document.getElementById('time-up-bar');
+        let quizStarted = false; 
+        
+        // Function to start the quiz
+        function startQuiz() {
+            if (!quizStarted) {
+                instructions.style.display = 'none'; // Hide instructions
+                quizFrame.style.display = 'block'; // Show the quiz
+                quizStarted = true; // Mark the quiz as started
+                setTimeout(() => {
+                    endQuiz(); // Automatically end the quiz 
+                }, 3600000); // ----- Timer ------
+            }
+        }
+
+        // Function to end the quiz 
+        function endQuiz() {
+            quizFrame.style.display = 'none'; // Hide the quiz
+            timerBar.style.display = 'none';
+            timer.textContent = "Quiz has ended";
+            timeUpBar.style.display = 'block'; // Show "Time's Up" bar after the 5-minute timer finishes
+
+        }
+
+        // Function to update the countdown timer
+        function countdownTimer() {
+            const sriLankaTimeZone = "Asia/Colombo";
+            const options = { timeZone: sriLankaTimeZone, hour12: false };
+            const startTime = new Date("2023-11-12T17:00:00").toLocaleString("en-US", options);
+            const endTime = new Date("2023-11-12T18:10:00").toLocaleString("en-US", options);
+            
+            const x = setInterval(function() {
+                const now = new Date().toLocaleString("en-US", options);
+                
+                if (now >= startTime) {
+                    clearInterval(x);
+                    startQuiz(); // Automatically start the quiz
+                    timer.innerHTML = "Quiz has started";
+                    timerBar.style.display = 'block'; // Display the 5-minute timer bar when the quiz starts
+                    startCountdownTimer(); // Automatically start the 5-minute countdown
+                } else {
+                    const timeLeft = new Date(startTime) - new Date(now);
+                    const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+                    const seconds = Math.floor((timeLeft / 1000) % 60);
+                    timer.innerHTML = `Time until start: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                }
+                
+                // If the current time exceeds the quiz end time, stop the timer
+                if (now >= endTime) {
+                    clearInterval(x);
+                    endQuiz(); // Automatically end the quiz
+                }
+            }, 1000);
+
+        
+        
+        }
+
+        countdownTimer(); // Start the timer immediately
+
+        // Function to start the 5-minute countdown timer
+        function startCountdownTimer() {
+            const countdown = document.getElementById('countdown');
+            const fiveMinutes = 60 * 60; // 1hr  in seconds
+
+            let remainingTime = fiveMinutes;
+            let interval = setInterval(function() {
+                const minutes = Math.floor(remainingTime / 60);
+                const seconds = remainingTime % 60;
+                countdown.innerHTML = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                remainingTime--;
+
+                if (remainingTime < 0) {
+                    clearInterval(interval);
+                    timerBar.textContent = 'Time is up...!'; // Hide the 5-minute timer bar when the countdown reaches 0
+                }
+            }, 1000);
+        }
+    </script>
+
+  </body>
+</html>
